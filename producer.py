@@ -21,4 +21,4 @@ for i in range(100):
   print(f"Sending {content}")
   producer.send("raw", content.encode("utf-8"))
 
-  time.sleep(2)
+  time.sleep(5)

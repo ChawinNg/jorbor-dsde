@@ -16,8 +16,10 @@ consumer = KafkaConsumer(
 mongo_uri = os.environ["MONGO_URI"]
 mongo = pymongo.MongoClient(mongo_uri)
 test = mongo["test"]
+testcol = test["test"]
 
 print("Running Consumer")
 for message in consumer:
-  index, text = json.loads(message.value).values()
-  print(index, text)
+  content = json.loads(message.value)
+  print(content)
+  # testcol.insert_one(content)
