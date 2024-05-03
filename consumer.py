@@ -3,6 +3,7 @@ load_dotenv()
 
 import os
 import json
+from datetime import datetime
 from kafka import KafkaConsumer
 import pymongo
 
@@ -20,6 +21,10 @@ testcol = test["test"]
 
 print("Running Consumer")
 for message in consumer:
-  content = json.loads(message.value)
-  print(content)
-  # testcol.insert_one(content)
+  time = datetime.fromtimestamp(int(message.timestamp) // 1000)
+  try:
+    content = json.loads(message.value)
+    # testcol.insert_one(content)
+    print(f"[{time}] Consumed {len(message.value)} bytes")
+  except:
+    print(f"[{time}] Error consuming json")
