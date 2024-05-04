@@ -7,6 +7,7 @@ import json
 from kafka import KafkaProducer
 
 kafka_broker = os.environ["KAFKA_BROKER"]
+kafka_topic = os.environ["KAFKA_TOPIC"]
 
 producer = KafkaProducer(bootstrap_servers=[kafka_broker])
 
@@ -21,8 +22,9 @@ with open("example_json") as f:
     # })
     
     print(f"Sending content")
-    
-    content = json.dumps(data)
-    producer.send("raw", content.encode("utf-8"))
 
-    time.sleep(5)
+    # content = json.dumps(data)
+    content = "a"
+    producer.send(kafka_topic, content.encode("utf-8"))
+
+    time.sleep(0.5)
