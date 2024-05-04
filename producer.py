@@ -15,16 +15,18 @@ with open("example_json") as f:
   data = json.load(f)
 
   print("Running producer")
+  i = 0
   while True:
     # content = json.dumps({
     #   "index": i,
     #   "text": random.choice(["A", "B", "C", "D"])
     # })
     
-    print(f"Sending content")
+    print(f"Sending content {i}")
 
     # content = json.dumps(data)
-    content = "a"
+    content = f"content-{i}"
     producer.send(kafka_topic, content.encode("utf-8"))
 
-    time.sleep(0.5)
+    time.sleep(0.05)
+    i += 1

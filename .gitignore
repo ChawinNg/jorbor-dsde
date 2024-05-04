@@ -1,4 +1,3 @@
 doinstance.*
 .env
-airflow/logs
 example_json

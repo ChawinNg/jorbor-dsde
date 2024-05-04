@@ -9,7 +9,9 @@ import pymongo
 
 kafka_broker = os.environ["KAFKA_BROKER"]
 kafka_topic = os.environ["KAFKA_TOPIC"]
-print(f"Connected to Kafka {kafka_broker}")
+mongo_uri = os.environ["MONGO_URI"]
+print(kafka_broker, kafka_topic, mongo_uri)
+
 consumer = KafkaConsumer(
   kafka_topic,
   bootstrap_servers=[kafka_broker],
@@ -17,9 +19,11 @@ consumer = KafkaConsumer(
   value_deserializer=lambda x: x.decode("utf-8"),
   group_id="group-0"
 )
+print(f"Connected to Kafka {kafka_broker}")
 
-mongo_uri = os.environ["MONGO_URI"]
 mongo = pymongo.MongoClient(mongo_uri)
+print("Connected to MongoDB")
+
 test = mongo["test"]
 testcol = test["test"]
 
@@ -32,7 +36,7 @@ for message in consumer:
   
   try:
     content = json.loads(message.value)
-    # testcol.insert_one(content)
+    testcol.insert_one(content)
     print(f"Consumed {len(message.value)} bytes")
   except:
-    print(f"Error consuming json")
+    print(f"Error consuming json {message.value}")
