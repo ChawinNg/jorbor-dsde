@@ -16,5 +16,6 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "raw_data:2:1"
+      KAFKA_MESSAGE_MAX_BYTES: 12000000
     depends_on:
       - "zookeeper"
