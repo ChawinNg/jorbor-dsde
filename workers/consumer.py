@@ -7,6 +7,8 @@ from datetime import datetime
 from kafka import KafkaConsumer
 import pymongo
 
+import cleaner
+
 kafka_broker = os.environ["KAFKA_BROKER"]
 kafka_topic = os.environ["KAFKA_TOPIC"]
 mongo_uri = os.environ["MONGO_URI"]
@@ -25,7 +27,7 @@ mongo = pymongo.MongoClient(mongo_uri)
 print("Connected to MongoDB")
 
 test = mongo["test"]
-testcol = test["test"]
+testcol = test["test_preprocessed"]
 
 print("Running Consumer")
 for message in consumer:
@@ -36,7 +38,7 @@ for message in consumer:
   
   try:
     content = json.loads(message.value)
-    testcol.insert_one(content)
+    testcol.insert_one(cleaner.process(content))
     print(f"Consumed {len(message.value)} bytes")
   except:
     print(f"Error consuming json {message.value}")
