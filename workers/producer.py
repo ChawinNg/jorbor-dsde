@@ -2,31 +2,37 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import os
-import time
 import json
+import sys
 from kafka import KafkaProducer
 
 kafka_broker = os.environ["KAFKA_BROKER"]
 kafka_topic = os.environ["KAFKA_TOPIC"]
 
-producer = KafkaProducer(bootstrap_servers=[kafka_broker])
+producer = KafkaProducer(
+  bootstrap_servers=[kafka_broker],
+  max_request_size=12000000
+)
 
-with open("example_json") as f:
-  data = json.load(f)
-
-  print("Running producer")
-  i = 0
-  while True:
-    # content = json.dumps({
-    #   "index": i,
-    #   "text": random.choice(["A", "B", "C", "D"])
-    # })
+print("Running producer")
+dir = f"example_json/{sys.argv[1]}"
+files = os.listdir(dir)
+for i, file in enumerate(files):
+  print(f"{i:04} of {len(files)}: {file}")
+  with open(os.path.join(dir, file), "r") as f:
+    data = json.load(f)
+    content = json.dumps(data)
     
-    print(f"Sending content {i}")
+    future = producer.send(kafka_topic, content.encode("utf-8"))
+    future.get(timeout=60)
 
-    # content = json.dumps(data)
-    content = f"content-{i}"
-    producer.send(kafka_topic, content.encode("utf-8"))
+# print("Running producer")
+# i = 0
+# while True:
+#   print(f"Sending content {i}")
 
-    time.sleep(0.05)
-    i += 1
+#   content = f"content-{i}"
+#   producer.send(kafka_topic, content.encode("utf-8"))
+
+#   time.sleep(0.05)
+#   i += 1
